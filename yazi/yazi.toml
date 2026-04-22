@@ -29,60 +29,85 @@ ueberzug_scale  = 1
 ueberzug_offset = [ 0, 0, 0, 0 ]
 
 [opener]
+# --- Text & Code Editors ---
 edit = [
-	#{ run = "${EDITOR:-vi} %s", desc = "$EDITOR",      for = "unix", block = true },
-	{ run = "code %s",          desc = "code",         for = "linux", orphan = true },
-	{ run = "code -w %s",       desc = "code (block)", for = "windows", block = true },
+    { run = 'nvim "$@"', desc = "Neovim", block = true, for = "unix" },
+    { run = 'code "$@"', desc = "VS Code", orphan = true, for = "unix" },
+    { run = 'vim "$@"', desc = "Vim", block = true, for = "unix" },
 ]
+
+# --- Media Players (Video & Audio) ---
 play = [
-	{ run = "xdg-open %s1",    desc = "Play", for = "linux", orphan = true },
-	{ run = "open %s",         desc = "Play", for = "macos" },
-	{ run = 'start "" %s1',    desc = "Play", for = "windows", orphan = true },
-	{ run = "termux-open %s1", desc = "Play", for = "android" },
-	{ run = "mediainfo %s1; echo 'Press enter to exit'; read _", block = true, desc = "Show media info", for = "unix" },
-	{ run = "mediainfo %s1 & pause", block = true, desc = "Show media info", for = "windows" },
+    { run = 'mpv "$@"', desc = "Play in mpv", orphan = true, for = "unix" },
+    { run = 'tauonmb "$@"', desc = "Play in Tauon Music Box", orphan = true, for = "unix" },
+    { run = 'namida "$@"', desc = "Play in Namida", orphan = true, for = "unix" },
 ]
+
+# --- Image Viewers & Editors ---
+view = [
+    { run = 'feh "$@"', desc = "View in feh", orphan = true, for = "unix" },
+    { run = 'gthumb "$@"', desc = "View in gThumb", orphan = true, for = "unix" },
+    { run = 'gimp "$@"', desc = "Edit in GIMP", orphan = true, for = "unix" },
+]
+
+# --- Document Viewers ---
+read = [
+    { run = 'papers "$@"', desc = "Read in Papers", orphan = true, for = "unix" },
+    { run = 'onlyoffice-desktopeditors "$@"', desc = "Open in OnlyOffice", orphan = true, for = "unix" },
+]
+
+# --- Generic Fallbacks & File Managers ---
 open = [
-	{ run = "xdg-open %s1",    desc = "Open", for = "linux" },
-	{ run = "open %s",         desc = "Open", for = "macos" },
-	{ run = 'start "" %s1',    desc = "Open", for = "windows", orphan = true },
-	{ run = "termux-open %s1", desc = "Open", for = "android" },
+    { run = 'xdg-open "$@"', desc = "System Default (xdg-open)", for = "linux" },
 ]
+
 reveal = [
-	{ run = "xdg-open %d1",         desc = "Reveal", for = "linux" },
-	{ run = "open -R %s1",          desc = "Reveal", for = "macos" },
-	{ run = "explorer /select,%s1", desc = "Reveal", for = "windows", orphan = true },
-	{ run = "termux-open %d1",      desc = "Reveal", for = "android" },
-	{ run = "clear; exiftool %s1; echo 'Press enter to exit'; read _", desc = "Show EXIF", for = "unix", block = true },
+    { run = 'thunar "$(dirname "$1")"', desc = "Reveal in Thunar", orphan = true, for = "linux" },
+    { run = 'xdg-open "$(dirname "$1")"', desc = "Reveal (System)", for = "linux" },
 ]
+
 extract = [
-	{ run = "ya pub extract --list %s", desc = "Extract here" },
+    { run = 'ya pub extract --list "$@"', desc = "Extract (Yazi)" },
+    { run = 'xarchiver "$@"', desc = "Open in Xarchiver", orphan = true, for = "linux" },
 ]
+
 download = [
-	{ run = "ya emit download --open %S", desc = "Download and open" },
-	{ run = "ya emit download %S",        desc = "Download" },
+    { run = 'ya emit download --open "$@"', desc = "Download and open" },
+    { run = 'ya emit download "$@"', desc = "Download" },
 ]
 
 [open]
 rules = [
-	# Folder
-	{ url = "*/", use = [ "edit", "open", "reveal" ] },
-	# Text
-	{ mime = "text/*", use = [ "edit", "reveal" ] },
-	# Image
-	{ mime = "image/*", use = [ "open", "reveal" ] },
-	# Media
-	{ mime = "{audio,video}/*", use = [ "play", "reveal" ] },
-	# Code
-	{ mime = "application/{json,ndjson,javascript,wine-extension-ini}", use = [ "edit", "reveal" ] },
-	# Archive
-	{ mime = "application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}", use = [ "extract", "reveal" ] },
-	# Empty file
-	{ mime = "inode/empty", use = [ "edit", "reveal" ] },
-	# Virtual file system
-	{ mime = "vfs/{absent,stale}", use = "download" },
-	# Fallback
-	{ url = "*", use = [ "open", "reveal" ] },
+    # Folders
+    { url = "*/", use = [ "edit", "open", "reveal" ] },
+    
+    # Text / Code
+    { mime = "text/*", use = [ "edit", "reveal" ] },
+    { mime = "application/{json,ndjson,javascript,wine-extension-ini}", use = [ "edit", "reveal" ] },
+    
+    # Images
+    { mime = "image/*", use = [ "view", "edit", "reveal" ] },
+    
+    # Media (Audio / Video)
+    { mime = "{audio,video}/*", use = [ "play", "reveal" ] },
+    
+    # Documents (PDFs)
+    { mime = "application/pdf", use = [ "read", "reveal" ] },
+    
+    # Office Documents (Spreadsheets, Word, etc.)
+    { mime = "application/vnd.*", use = [ "read", "reveal" ] },
+    
+    # Archives
+    { mime = "application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}", use = [ "extract", "reveal" ] },
+    
+    # Empty files
+    { mime = "inode/empty", use = [ "edit", "reveal" ] },
+    
+    # Virtual file system
+    { mime = "vfs/{absent,stale}", use = "download" },
+    
+    # Fallback (If none of the above match, just use the system default)
+    { url = "*", use = [ "open", "reveal" ] },
 ]
 
 [tasks]
