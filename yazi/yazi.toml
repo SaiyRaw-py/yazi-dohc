@@ -29,6 +29,12 @@ ueberzug_scale  = 1
 ueberzug_offset = [ 0, 0, 0, 0 ]
 
 [opener]
+office = [
+	#{ run = 'onlyoffice "$@"', desc = "OnlyOffice", orphan = true, for = "unix" },
+    # If the above doesn't launch it, uncomment the line below instead:
+    { run = 'onlyoffice-desktopeditors "$@"', desc = "OnlyOffice", orphan = true, for = "unix" },
+]
+
 # --- Text & Code Editors ---
 edit = [
     { run = 'nvim "$@"', desc = "Neovim", block = true, for = "unix" },
@@ -78,13 +84,29 @@ download = [
 
 [open]
 rules = [
-    # Folders
+    # 1. Folders always go first
     { url = "*/", use = [ "edit", "open", "reveal" ] },
     
+    # 2. BULLETPROOF OFFICE RULES (Explicitly matched, no grouping)
+    { url = "*.docx", use = [ "office", "reveal" ] },
+    { url = "*.xlsx", use = [ "office", "reveal" ] },
+    { url = "*.pptx", use = [ "office", "reveal" ] },
+    { url = "*.doc",  use = [ "office", "reveal" ] },
+    { url = "*.xls",  use = [ "office", "reveal" ] },
+    { url = "*.ppt",  use = [ "office", "reveal" ] },
+    { url = "*.odt",  use = [ "office", "reveal" ] },
+    { url = "*.ods",  use = [ "office", "reveal" ] },
+    { url = "*.odp",  use = [ "office", "reveal" ] },
+    { url = "*.csv",  use = [ "office", "edit", "reveal" ] },
+    { url = "*.tsv",  use = [ "office", "edit", "reveal" ] },
+
+    # 3. Catch official Office MIME types just in case
+    { mime = "application/vnd.*", use = [ "office", "reveal" ] },
+
     # Text / Code
     { mime = "text/*", use = [ "edit", "reveal" ] },
-    { mime = "application/{json,ndjson,javascript,wine-extension-ini}", use = [ "edit", "reveal" ] },
-    
+    { mime = "application/{xml,json,ndjson,javascript,wine-extension-ini}", use = [ "edit", "reveal" ] },
+
     # Images
     { mime = "image/*", use = [ "view", "edit", "reveal" ] },
     
