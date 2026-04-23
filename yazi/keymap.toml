@@ -1,0 +1,38 @@
+# --- JUMP TO CHAR ---
+# Press 'f' and then a letter to jump forward to it.
+# Press 'F' and then a letter to jump backward.
+[[manager.prepend_keymap]]
+on   = [ "f" ]
+run  = "plugin jump-to-char"
+desc = "Jump to character"
+
+[[manager.prepend_keymap]]
+on   = [ "F" ]
+run  = "plugin jump-to-char --args=shift"
+desc = "Jump backward to character"
+
+# --- SMART ENTER ---
+# Makes 'l' and 'Enter' open files or enter directories dynamically
+[[manager.prepend_keymap]]
+on   = [ "l" ]
+run  = "plugin smart-enter"
+desc = "Enter directory, or open file"
+
+[[manager.prepend_keymap]]
+on   = [ "<Enter>" ]
+run  = "plugin smart-enter"
+desc = "Enter directory, or open file"
+
+# --- MAX PREVIEW ---
+# Press 'T' to maximize the preview pane, press 'T' again to shrink it.
+[[manager.prepend_keymap]]
+on   = [ "T" ]
+run  = "plugin max-preview"
+desc = "Maximize or restore the preview pane"
+
+# --- CHMOD ---
+# Press 'c' then 'm' to visually change permissions on files.
+[[manager.prepend_keymap]]
+on   = [ "c", "m" ]
+run  = "plugin chmod"
+desc = "Chmod on selected files"
