@@ -38,7 +38,7 @@ office = [
 # --- Text & Code Editors ---
 edit = [
     { run = 'nvim "$@"', desc = "Neovim", block = true, for = "unix" },
-    { run = 'code "$@"', desc = "VS Code", orphan = true, for = "unix" },
+    { run = 'vscodium "$@"', desc = "VS Codium", orphan = true, for = "unix" },
     { run = 'vim "$@"', desc = "Vim", block = true, for = "unix" },
 ]
 
